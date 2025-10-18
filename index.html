@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Calculadora de Materiales para Hayes Motorworks - Calcula materiales y precios de piezas de vehículos">
+  <meta name="keywords" content="Hayes Motorworks, calculadora, materiales, autopartes">
+  <title>Calculadora de Materiales - Hayes Motorworks</title>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    /* Variables CSS */
+    :root {
+      --accent: #19C1FF;
+      --bg: #0a0a0a;
+      --panel: #111;
+      --text: #ffffff;
+      --border: #222;
+    }
+
+    /* Reset y Base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Poppins', Arial, sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    /* Logo y Título */
+    .logo {
+      display: block;
+      margin: 10px auto;
+      width: 260px;
+      max-width: 60vw;
+      filter: drop-shadow(0 0 10px var(--accent));
+    }
+
+    h1 {
+      color: var(--accent);
+      text-align: center;
+      text-shadow: 0 0 10px var(--accent);
+      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+
+    /* Botones de Acción */
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .btn:hover {
+      background: rgba(25, 193, 255, 0.08);
+      box-shadow: 0 0 10px rgba(25, 193, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Grid de Secciones */
+    .sections {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* Tarjetas */
+    .card {
+      background: var(--panel);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      padding: 14px;
+      min-width: 320px;
+      max-width: 100%;
+      box-shadow: 0 0 15px rgba(25, 193, 255, 0.25);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 0 25px rgba(25, 193, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .card.wide {
+      min-width: 500px;
+    }
+
+    .card h2 {
+      margin: 0 0 10px 0;
+      color: var(--accent);
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 6px;
+      font-size: 1.05rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Items de Piezas */
+    .item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .item:last-child {
+      border-bottom: 0;
+    }
+
+    /* Labels y Checkboxes */
+    label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      min-width: 0;
+      user-select: none;
+    }
+
+    label span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    input[type="checkbox"] {
+      accent-color: var(--accent);
+      transform: scale(1.2);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* Inputs Numéricos */
+    input[type="number"] {
+      width: 50px;
+      flex-shrink: 0;
+      background: #0e0e0e;
+      color: white;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 2px 4px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-align: center;
+      display: none;
+    }
+
+    input[type="number"].visible {
+      display: block;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      box-shadow: 0 0 6px var(--accent);
+    }
+
+    /* Eliminar flechas de input number */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      opacity: 1;
+    }
+
+    /* Botón Full Tunning */
+    .full-tunning-btn {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 8px;
+      padding: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .full-tunning-btn:hover {
+      background: rgba(25, 193, 255, 0.08);
+      box-shadow: 0 0 10px rgba(25, 193, 255, 0.4);
+    }
+
+    /* Grid de Cosméticos */
+    .cosmeticos-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0 8px;
+    }
+
+    .cosmeticos-grid .item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      border-bottom: 1px solid var(--border);
+      padding: 6px 2px;
+      min-width: 0;
+      gap: 4px;
+    }
+
+    .cosmeticos-grid .item:nth-last-child(-n+2) {
+      border-bottom: 0;
+    }
+
+    .cosmeticos-grid .item label {
+      min-width: 0;
+    }
+
+    .cosmeticos-grid .item label span {
+      font-size: 0.88rem;
+    }
+
+    /* Resumen */
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 22px;
+    }
+
+    .totals,
+    .sales {
+      background: var(--panel);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 0 15px rgba(25, 193, 255, 0.35);
+      width: 520px;
+      max-width: 100%;
+    }
+
+    .totals h3,
+    .sales h3 {
+      margin: 0 0 10px 0;
+      color: var(--accent);
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    /* Grid de Materiales */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px 18px;
+    }
+
+    .mat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 8px;
+      background: #0e0e0e;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .mat-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .mat-icon {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 3px rgba(25, 193, 255, 0.3));
+    }
+
+    .mat-info span {
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mat strong {
+      color: var(--accent);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    /* Filas de Ventas */
+    .sales .row {
+      display: flex;
+      justify-content: space-between;
+      background: #0e0e0e;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+    }
+
+    .sales .total {
+      font-size: 1.15rem;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .sales .total strong {
+      color: var(--accent);
+    }
+
+    /* Notas */
+    .note {
+      display: block;
+      text-align: center;
+      color: #b8e7ff;
+      opacity: 0.8;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      .card.wide {
+        min-width: 320px;
+      }
+
+      .cosmeticos-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body x-data="hayesCalculator()">
+
+  <!-- Logo y Título -->
+  <img src="https://i.postimg.cc/FRcwXPHk/LOGO-2.png" alt="Hayes Motorworks" class="logo">
+  <h1>Calculadora de Materiales – Hayes Motorworks</h1>
+
+  <!-- Botones de Acción -->
+  <div class="actions">
+    <button class="btn" @click="selectAll()">MARCAR TODO</button>
+    <button class="btn" @click="clearAll()">LIMPIAR TODO</button>
+  </div>
+
+  <!-- Secciones de Piezas -->
+  <div class="sections">
+    
+    <!-- Partes Principales -->
+    <div class="card">
+      <h2>Partes Principales</h2>
+      <template x-for="(materials, partName) in data.principales" :key="partName">
+        <div class="item">
+          <label>
+            <input type="checkbox" x-model="selected[partName]" @change="updateQuantity(partName)">
+            <span x-text="partName"></span>
+          </label>
+          <input 
+            type="number" 
+            min="1" 
+            x-model.number="quantities[partName]" 
+            @input="calculate()"
+            :class="{ 'visible': selected[partName] }"
+          >
+        </div>
+      </template>
+    </div>
+
+    <!-- Partes de Servicio -->
+    <div class="card">
+      <h2>Partes de Servicio</h2>
+      <template x-for="(materials, partName) in data.servicio" :key="partName">
+        <div class="item">
+          <label>
+            <input type="checkbox" x-model="selected[partName]" @change="updateQuantity(partName)">
+            <span x-text="partName"></span>
+          </label>
+          <input 
+            type="number" 
+            min="1" 
+            x-model.number="quantities[partName]" 
+            @input="calculate()"
+            :class="{ 'visible': selected[partName] }"
+          >
+        </div>
+      </template>
+    </div>
+
+    <!-- Rendimiento -->
+    <div class="card">
+      <h2>Rendimiento</h2>
+      <template x-for="(materials, partName) in data.rendimiento" :key="partName">
+        <div class="item">
+          <label>
+            <input type="checkbox" x-model="selected[partName]" @change="updateQuantity(partName)">
+            <span x-text="partName"></span>
+          </label>
+          <input 
+            type="number" 
+            min="1" 
+            x-model.number="quantities[partName]" 
+            @input="calculate()"
+            :class="{ 'visible': selected[partName] }"
+          >
+        </div>
+      </template>
+      <button class="full-tunning-btn" @click="toggleFullTunning()">FULL TUNNING</button>
+      <small class="note">Activa o desactiva todas las piezas de rendimiento.</small>
+    </div>
+
+    <!-- Cosméticos -->
+    <div class="card wide">
+      <h2>Cosméticos</h2>
+      <div class="cosmeticos-grid">
+        <template x-for="(materials, partName) in data.cosmeticos" :key="partName">
+          <div class="item">
+            <label>
+              <input type="checkbox" x-model="selected[partName]" @change="updateQuantity(partName)">
+              <span x-text="partName"></span>
+            </label>
+            <input 
+              type="number" 
+              min="1" 
+              x-model.number="quantities[partName]" 
+              @input="calculate()"
+              :class="{ 'visible': selected[partName] }"
+            >
+          </div>
+        </template>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Resumen -->
+  <div class="summary">
+    
+    <!-- Totales de Materiales -->
+    <div class="totals">
+      <h3>TOTALES DE MATERIALES</h3>
+      <template x-if="Object.values(materialTotals).some(v => v > 0)">
+        <div class="grid">
+          <template x-for="material in materialOrder" :key="material">
+            <template x-if="materialTotals[material] > 0">
+              <div class="mat">
+                <div class="mat-info">
+                  <img :src="materialImages[material]" :alt="material" class="mat-icon">
+                  <span x-text="material"></span>
+                </div>
+                <strong x-text="materialTotals[material]"></strong>
+              </div>
+            </template>
+          </template>
+        </div>
+      </template>
+      <template x-if="!Object.values(materialTotals).some(v => v > 0)">
+        <p class="note">Selecciona piezas para ver los materiales necesarios.</p>
+      </template>
+      <small class="note">Los totales se multiplican por la cantidad indicada por pieza.</small>
+    </div>
+
+    <!-- Total a Cobrar -->
+    <div class="sales">
+      <h3>TOTAL A COBRAR 💰</h3>
+      <div class="row">
+        <span>Subtotal Principales</span>
+        <strong x-text="formatPrice(salesSubtotals.principales)"></strong>
+      </div>
+      <div class="row">
+        <span>Subtotal Servicio</span>
+        <strong x-text="formatPrice(salesSubtotals.servicio)"></strong>
+      </div>
+      <div class="row total">
+        <span>Total General</span>
+        <strong x-text="formatPrice(salesSubtotals.principales + salesSubtotals.servicio)"></strong>
+      </div>
+      <template x-if="missingPrices.length > 0">
+        <small class="note">
+          Sin precio (excluidos del total): <span x-text="missingPrices.join(', ')"></span>
+        </small>
+      </template>
+    </div>
+
+  </div>
+
+  <script>
+    function hayesCalculator() {
+      return {
+        // Orden de materiales para mostrar con sus imágenes
+        materialOrder: [
+          'COBRE',
+          'PLÁSTICO',
+          'GOMA',
+          'PIEZAS ELECTRÓNICAS',
+          'ACERO',
+          'ALUMINIO',
+          'VIDRIO',
+          'ACEITE SINTÉTICO',
+          'LATÓN',
+          'CHATARRA',
+          'ÁCIDO',
+          'FIBRA DE CARBONO'
+        ],
+
+        materialImages: {
+          'COBRE': 'https://i.postimg.cc/QxCnTRVG/cobre.png',
+          'PLÁSTICO': 'https://i.postimg.cc/gkjBZfr9/plastico.png',
+          'GOMA': 'https://i.postimg.cc/RVhbHjh8/goma.png',
+          'PIEZAS ELECTRÓNICAS': 'https://i.postimg.cc/vHTSVpTk/Electronica.png',
+          'ACERO': 'https://i.postimg.cc/9F0N7v0n/acero.png',
+          'ALUMINIO': 'https://i.postimg.cc/xT8FzW8F/aluminio.png',
+          'VIDRIO': 'https://i.postimg.cc/VsDV5Ysc/vidrio.png',
+          'ACEITE SINTÉTICO': 'https://i.postimg.cc/TY1HDZ17/Aceite.png',
+          'LATÓN': 'https://i.postimg.cc/gcNTrYzf/laton.png',
+          'CHATARRA': 'https://i.postimg.cc/2j2K3zks/chatarra.png',
+          'ÁCIDO': 'https://i.postimg.cc/fWBrkwzp/acido.png',
+          'FIBRA DE CARBONO': 'https://i.postimg.cc/qBj5gkJF/fibra.png'
+        },
+
+        // Base de datos de piezas y materiales
+        data: {
+          principales: {
+            'Batería Eléctrica': { 'ÁCIDO': 5, 'COBRE': 5, 'ALUMINIO': 6, 'PIEZAS ELECTRÓNICAS': 7 },
+            'Rueda de Vehículo': { 'LATÓN': 1, 'FIBRA DE CARBONO': 2, 'ACERO': 4, 'GOMA': 5 },
+            'Frenos': { 'LATÓN': 2, 'GOMA': 3, 'ACERO': 5 },
+            'Bloque Motor': { 'GOMA': 1, 'PLÁSTICO': 2, 'PIEZAS ELECTRÓNICAS': 3, 'COBRE': 4, 'ACERO': 5 },
+            'Tanque Gasolina': { 'GOMA': 1, 'PLÁSTICO': 2, 'PIEZAS ELECTRÓNICAS': 3, 'COBRE': 4, 'ACERO': 5 },
+            'Carrocería': { 'GOMA': 1, 'PLÁSTICO': 2, 'PIEZAS ELECTRÓNICAS': 3, 'COBRE': 4, 'ACERO': 5 },
+            'Transmisión': { 'LATÓN': 2, 'ACEITE SINTÉTICO': 3, 'ALUMINIO': 6, 'ACERO': 10 },
+            'Bomba de Dirección': { 'ACEITE SINTÉTICO': 2, 'PIEZAS ELECTRÓNICAS': 3, 'ALUMINIO': 6, 'ACERO': 8 },
+            'Inyectores': { 'PIEZAS ELECTRÓNICAS': 2, 'PLÁSTICO': 2, 'ALUMINIO': 3, 'ACERO': 4 },
+            'Motor Eléctrico': { 'FIBRA DE CARBONO': 4, 'PIEZAS ELECTRÓNICAS': 6, 'COBRE': 7, 'ACERO': 8 },
+            'Radiador': { 'ACEITE SINTÉTICO': 1, 'PLÁSTICO': 3, 'ALUMINIO': 5, 'ACERO': 6 },
+            'Alternador': { 'PIEZAS ELECTRÓNICAS': 3, 'COBRE': 4, 'ACERO': 5 }
+          },
+
+          servicio: {
+            'Líquido de Transmisión': { 'ÁCIDO': 1, 'ACEITE SINTÉTICO': 3 },
+            'Filtro de Aceite': { 'GOMA': 1, 'ACEITE SINTÉTICO': 1, 'ACERO': 2 },
+            'Neumático': { 'ACERO': 2, 'GOMA': 5 },
+            'Bujía': { 'PIEZAS ELECTRÓNICAS': 1, 'ACERO': 2, 'COBRE': 2 },
+            'Líquido de Dirección': { 'ÁCIDO': 1, 'ACEITE SINTÉTICO': 2 },
+            'Refrigerante de Batería': { 'PLÁSTICO': 1, 'ÁCIDO': 2 },
+            'Cableado de Alto Voltaje': { 'FIBRA DE CARBONO': 1, 'PIEZAS ELECTRÓNICAS': 4, 'COBRE': 5 },
+            'Pastillas de Freno': { 'GOMA': 2, 'ACERO': 3 },
+            'Filtro de Combustible': { 'GOMA': 1, 'ACERO': 2, 'PLÁSTICO': 2 },
+            'Líquido de Frenos': { 'ACEITE SINTÉTICO': 1, 'ÁCIDO': 2 },
+            'Correa de Transmisión': { 'ACERO': 2, 'GOMA': 3 },
+            'Filtro de Aire': { 'GOMA': 1, 'PLÁSTICO': 2 },
+            'Refrigerante': { 'PLÁSTICO': 1, 'ÁCIDO': 2 }
+          },
+
+          rendimiento: {
+            'Suspensión': { 'FIBRA DE CARBONO': 1, 'ALUMINIO': 2, 'GOMA': 2, 'ACERO': 3 },
+            'Turbo': { 'PIEZAS ELECTRÓNICAS': 1, 'ALUMINIO': 1, 'PLÁSTICO': 1, 'ACERO': 2, 'COBRE': 2 },
+            'Frenos (Rendimiento)': { 'FIBRA DE CARBONO': 1, 'COBRE': 1, 'GOMA': 2, 'ACERO': 3 },
+            'Motor': { 'PIEZAS ELECTRÓNICAS': 2, 'FIBRA DE CARBONO': 2, 'COBRE': 3, 'ACERO': 4, 'ALUMINIO': 6 },
+            'Transmisión (Rendimiento)': { 'ACEITE SINTÉTICO': 1, 'ALUMINIO': 2, 'PLÁSTICO': 2, 'COBRE': 3, 'ACERO': 4 },
+            'Blindaje': { 'LATÓN': 1, 'GOMA': 2, 'FIBRA DE CARBONO': 3, 'ALUMINIO': 4, 'ACERO': 6 }
+          },
+
+          cosmeticos: {
+            'Interior': { 'ACEITE SINTÉTICO': 1, 'GOMA': 2, 'PLÁSTICO': 4 },
+            'Exterior': { 'VIDRIO': 1, 'PLÁSTICO': 3, 'ALUMINIO': 4 },
+            'Techo': { 'FIBRA DE CARBONO': 1, 'ALUMINIO': 2, 'ACERO': 3 },
+            'Luces': { 'PIEZAS ELECTRÓNICAS': 2, 'VIDRIO': 2, 'PLÁSTICO': 2 },
+            'Chasis': { 'FIBRA DE CARBONO': 2, 'ALUMINIO': 3, 'ACERO': 5 },
+            'Livery': { 'ÁCIDO': 1, 'ACEITE SINTÉTICO': 2, 'PLÁSTICO': 3 },
+            'Extras': { 'PIEZAS ELECTRÓNICAS': 1, 'ALUMINIO': 1, 'PLÁSTICO': 3 },
+            'Capó': { 'FIBRA DE CARBONO': 1, 'ALUMINIO': 2, 'ACERO': 3 },
+            'Alerón': { 'PLÁSTICO': 1, 'ALUMINIO': 2, 'FIBRA DE CARBONO': 3 },
+            'Claxon': { 'PIEZAS ELECTRÓNICAS': 1, 'COBRE': 2, 'PLÁSTICO': 2 },
+            'Tinte Ventanas': { 'ÁCIDO': 1, 'ACEITE SINTÉTICO': 1, 'PLÁSTICO': 2 },
+            'Parachoques Delantero': { 'GOMA': 1, 'PLÁSTICO': 3, 'ACERO': 4 },
+            'Faldones': { 'ALUMINIO': 1, 'ACERO': 2, 'PLÁSTICO': 3 },
+            'Rejilla': { 'PLÁSTICO': 1, 'ACERO': 2, 'ALUMINIO': 2 },
+            'Parachoques Trasero': { 'GOMA': 1, 'PLÁSTICO': 3, 'ACERO': 4 },
+            'Humo de Rueda': { 'ÁCIDO': 1, 'ACEITE SINTÉTICO': 2, 'GOMA': 2 },
+            'Llantas': { 'GOMA': 1, 'ACERO': 2, 'ALUMINIO': 4 },
+            'Pintura': { 'PLÁSTICO': 1, 'ÁCIDO': 2, 'ACEITE SINTÉTICO': 2 },
+            'Neones': { 'PIEZAS ELECTRÓNICAS': 2, 'VIDRIO': 2, 'PLÁSTICO': 3 },
+            'Guardabarros': { 'ALUMINIO': 1, 'PLÁSTICO': 2, 'ACERO': 3 },
+            'Escape': { 'GOMA': 1, 'ALUMINIO': 2, 'ACERO': 3 },
+            'Matrícula': { 'ACERO': 1, 'ALUMINIO': 2, 'PLÁSTICO': 2 }
+          }
+        },
+
+        // Precios de venta (solo Principales y Servicio)
+        prices: {
+          principales: {
+            'Bloque Motor': 150,
+            'Carrocería': 150,
+            'Tanque Gasolina': 150,
+            'Rueda de Vehículo': 120,
+            'Transmisión': 210,
+            'Batería Eléctrica': 230,
+            'Bomba de Dirección': 190,
+            'Radiador': 150,
+            'Inyectores': 110,
+            'Frenos': 100,
+            'Motor Eléctrico': 250,
+            'Alternador': 120
+          },
+          servicio: {
+            'Refrigerante de Batería': 30,
+            'Bujía': 50,
+            'Filtro de Aire': 30,
+            'Correa de Transmisión': 50,
+            'Pastillas de Freno': 50,
+            'Filtro de Aceite': 40,
+            'Líquido de Dirección': 30,
+            'Líquido de Frenos': 30,
+            'Cableado de Alto Voltaje': 100,
+            'Neumático': 70,
+            'Filtro de Combustible': 50,
+            'Líquido de Transmisión': 40,
+            'Refrigerante': 30
+          }
+        },
+
+        // Estado de la aplicación
+        selected: {},
+        quantities: {},
+        materialTotals: {},
+        salesSubtotals: { principales: 0, servicio: 0 },
+        missingPrices: [],
+
+        // Inicialización
+        init() {
+          this.calculate();
+        },
+
+        // Actualiza cantidad cuando se marca/desmarca
+        updateQuantity(partName) {
+          if (this.selected[partName]) {
+            this.quantities[partName] = 1;
+          } else {
+            delete this.quantities[partName];
+          }
+          this.calculate();
+        },
+
+        // Calcula totales de materiales y precios
+        calculate() {
+          // Reiniciar totales de materiales
+          this.materialTotals = {};
+          this.materialOrder.forEach(mat => {
+            this.materialTotals[mat] = 0;
+          });
+
+          // Combinar todas las categorías
+          const allParts = {
+            ...this.data.principales,
+            ...this.data.servicio,
+            ...this.data.rendimiento,
+            ...this.data.cosmeticos
+          };
+
+          // Calcular materiales
+          for (const [partName, isSelected] of Object.entries(this.selected)) {
+            if (isSelected && allParts[partName]) {
+              const quantity = Math.max(1, Number(this.quantities[partName]) || 1);
+              const materials = allParts[partName];
+
+              for (const [material, amount] of Object.entries(materials)) {
+                this.materialTotals[material] = (this.materialTotals[material] || 0) + (amount * quantity);
+              }
+            }
+          }
+
+          // Calcular precios de venta
+          this.calculateSales();
+        },
+
+        // Calcula subtotales de ventas
+        calculateSales() {
+          this.salesSubtotals.principales = 0;
+          this.salesSubtotals.servicio = 0;
+          this.missingPrices = [];
+
+          // Calcular subtotal de Principales
+          for (const [partName, isSelected] of Object.entries(this.selected)) {
+            if (isSelected && this.data.principales[partName]) {
+              const quantity = Math.max(1, Number(this.quantities[partName]) || 1);
+              const price = this.prices.principales[partName];
+
+              if (typeof price === 'number') {
+                this.salesSubtotals.principales += price * quantity;
+              } else {
+                if (!this.missingPrices.includes(partName)) {
+                  this.missingPrices.push(partName);
+                }
+              }
+            }
+          }
+
+          // Calcular subtotal de Servicio
+          for (const [partName, isSelected] of Object.entries(this.selected)) {
+            if (isSelected && this.data.servicio[partName]) {
+              const quantity = Math.max(1, Number(this.quantities[partName]) || 1);
+              const price = this.prices.servicio[partName];
+
+              if (typeof price === 'number') {
+                this.salesSubtotals.servicio += price * quantity;
+              } else {
+                if (!this.missingPrices.includes(partName)) {
+                  this.missingPrices.push(partName);
+                }
+              }
+            }
+          }
+        },
+
+        // Marcar todas las piezas
+        selectAll() {
+          const allParts = {
+            ...this.data.principales,
+            ...this.data.servicio,
+            ...this.data.rendimiento,
+            ...this.data.cosmeticos
+          };
+
+          Object.keys(allParts).forEach(partName => {
+            this.selected[partName] = true;
+            this.quantities[partName] = 1;
+          });
+
+          this.calculate();
+        },
+
+        // Limpiar todo
+        clearAll() {
+          this.selected = {};
+          this.quantities = {};
+          this.calculate();
+        },
+
+        // Toggle Full Tunning (solo Rendimiento)
+        toggleFullTunning() {
+          const rendimientoParts = Object.keys(this.data.rendimiento);
+          const allSelected = rendimientoParts.every(part => this.selected[part]);
+
+          rendimientoParts.forEach(partName => {
+            this.selected[partName] = !allSelected;
+            if (this.selected[partName]) {
+              this.quantities[partName] = 1;
+            } else {
+              delete this.quantities[partName];
+            }
+          });
+
+          this.calculate();
+        },
+
+        // Formatear precio
+        formatPrice(value) {
+          return '$ ' + Number(value || 0).toFixed(2);
+        }
+      };
+    }
+  </script>
+</body>
+</html>
