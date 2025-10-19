@@ -362,6 +362,115 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Popup de Descuento */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .popup {
+      background: var(--panel);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 0 30px rgba(25, 193, 255, 0.5);
+      animation: popupSlide 0.3s ease;
+    }
+
+    @keyframes popupSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .popup h2 {
+      color: var(--accent);
+      text-align: center;
+      margin: 0 0 10px 0;
+      font-size: 1.5rem;
+      text-shadow: 0 0 10px var(--accent);
+    }
+
+    .popup p {
+      text-align: center;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    .discount-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .discount-btn {
+      background: transparent;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .discount-btn:hover {
+      background: rgba(25, 193, 255, 0.15);
+      box-shadow: 0 0 15px rgba(25, 193, 255, 0.5);
+      transform: scale(1.05);
+    }
+
+    .popup-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-close, .btn-remove {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-close:hover, .btn-remove:hover {
+      background: rgba(25, 193, 255, 0.08);
+      box-shadow: 0 0 10px rgba(25, 193, 255, 0.4);
+    }
+
+    .btn-remove {
+      color: #ff4444;
+      border-color: #ff4444;
+    }
+
+    .btn-remove:hover {
+      background: rgba(255, 68, 68, 0.08);
+      box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
+    }
   </style>
 </head>
 <body x-data="hayesCalculator()">
@@ -374,6 +483,18 @@
   <div class="actions">
     <button class="btn" @click="selectAll()">MARCAR TODO</button>
     <button class="btn" @click="clearAll()">LIMPIAR TODO</button>
+    <button class="btn" @click="showDiscountPopup = true">APLICAR DESCUENTO</button>
+  </div>
+
+  <!-- Popup de Descuento -->
+  <div x-show="showDiscountPopup" class="popup-overlay" @click="showDiscountPopup = false">
+    <div class="popup" @click.stop>
+      <h2>Putos Convenios</h2>
+      <p style="font-size: 1.1rem; margin-top: 20px;">Próximamente...</p>
+      <div class="popup-actions" style="margin-top: 30px;">
+        <button class="btn-close" @click="showDiscountPopup = false">CERRAR</button>
+      </div>
+    </div>
   </div>
 
   <!-- Secciones de Piezas -->
@@ -618,38 +739,38 @@
           }
         },
 
-// Precios de venta (solo Principales y Servicio)
-prices: {
-  principales: {
-    'Bloque Motor': 100,
-    'Carrocería': 100,
-    'Tanque Gasolina': 100,
-    'Alternador': 96,
-    'Rueda de Vehículo': 96,
-    'Transmisión': 168,
-    'Batería Eléctrica': 184,
-    'Bomba de Dirección': 152,
-    'Radiador': 120,
-    'Inyectores': 88,
-    'Frenos': 80,
-    'Motor Eléctrico': 200
-  },
-  servicio: {
-    'Refrigerante de Batería': 24,
-    'Bujía': 40,
-    'Filtro de Aire': 24,
-    'Correa de Transmisión': 40,
-    'Pastillas de Freno': 40,
-    'Filtro de Aceite': 32,
-    'Líquido de Dirección': 24,
-    'Líquido de Frenos': 24,
-    'Cableado de Alto Voltaje': 80,
-    'Neumático': 56,
-    'Filtro de Combustible': 40,
-    'Líquido de Transmisión': 32,
-    'Refrigerante': 24
-  }
-},
+        // Precios de venta (solo Principales y Servicio)
+        prices: {
+          principales: {
+            'Bloque Motor': 150,
+            'Carrocería': 150,
+            'Tanque Gasolina': 150,
+            'Rueda de Vehículo': 120,
+            'Transmisión': 210,
+            'Batería Eléctrica': 230,
+            'Bomba de Dirección': 190,
+            'Radiador': 150,
+            'Inyectores': 110,
+            'Frenos': 100,
+            'Motor Eléctrico': 250,
+            'Alternador': 120
+          },
+          servicio: {
+            'Refrigerante de Batería': 30,
+            'Bujía': 50,
+            'Filtro de Aire': 30,
+            'Correa de Transmisión': 50,
+            'Pastillas de Freno': 50,
+            'Filtro de Aceite': 40,
+            'Líquido de Dirección': 30,
+            'Líquido de Frenos': 30,
+            'Cableado de Alto Voltaje': 100,
+            'Neumático': 70,
+            'Filtro de Combustible': 50,
+            'Líquido de Transmisión': 40,
+            'Refrigerante': 30
+          }
+        },
 
         // Estado de la aplicación
         selected: {},
@@ -657,6 +778,7 @@ prices: {
         materialTotals: {},
         salesSubtotals: { principales: 0, servicio: 0 },
         missingPrices: [],
+        showDiscountPopup: false,
 
         // Inicialización
         init() {
