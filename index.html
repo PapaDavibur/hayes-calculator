@@ -432,6 +432,9 @@
       justify-content: center;
       align-items: center;
       gap: 15px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-transform: uppercase;
     }
 
     .discount-btn:hover {
@@ -487,7 +490,7 @@
     <button class="btn" @click="showDiscountPopup = true">APLICAR DESCUENTO</button>
   </div>
 
-  <!-- Popup de Descuento (sin foto, un solo descuento 20%) -->
+  <!-- Popup de Descuento (sin foto, texto igual que otros botones) -->
   <div x-show="showDiscountPopup" class="popup-overlay" @click="showDiscountPopup = false">
     <div class="popup" @click.stop>
       <h2>Descuento</h2>
@@ -495,7 +498,7 @@
 
       <div class="discount-options">
         <button class="discount-btn" @click="applyDiscount(20, 'Descuento 20%')">
-          <span class="convenio-name" style="text-align:center;width:100%;">Descuento 20%</span>
+          DESCUENTO 20%
         </button>
       </div>
 
@@ -691,15 +694,9 @@
         // Base de datos de piezas y materiales
         data: {
           principales: {
-            // Batería electrica: cambiar 5 cobre a 5 latón
             'Batería Eléctrica': { 'ÁCIDO': 5, 'LATÓN': 5, 'ALUMINIO': 6, 'PIEZAS ELECTRÓNICAS': 7 },
-
             'Rueda de Vehículo': { 'LATÓN': 1, 'FIBRA DE CARBONO': 2, 'ACERO': 4, 'GOMA': 5 },
-
             'Frenos': { 'LATÓN': 2, 'GOMA': 3, 'ACERO': 5 },
-
-            // Bloque motor, tanque gasolina, carrocería:
-            // 2 PLÁSTICO → 2 LATÓN, 4 COBRE → 4 HIERRO
             'Bloque Motor': {
               'GOMA': 1,
               'LATÓN': 2,
@@ -721,19 +718,11 @@
               'HIERRO': 4,
               'ACERO': 5
             },
-
             'Transmisión': { 'LATÓN': 2, 'ACEITE SINTÉTICO': 3, 'ALUMINIO': 6, 'ACERO': 10 },
             'Bomba de Dirección': { 'ACEITE SINTÉTICO': 2, 'PIEZAS ELECTRÓNICAS': 3, 'ALUMINIO': 6, 'ACERO': 8 },
-
-            // Inyector: 2 PLÁSTICO → 2 LATÓN
             'Inyectores': { 'PIEZAS ELECTRÓNICAS': 2, 'LATÓN': 2, 'ALUMINIO': 3, 'ACERO': 4 },
-
-            // Motor eléctrico: 7 COBRE → 7 LATÓN
             'Motor Eléctrico': { 'FIBRA DE CARBONO': 4, 'PIEZAS ELECTRÓNICAS': 6, 'LATÓN': 7, 'ACERO': 8 },
-
-            // Radiador: 3 PLÁSTICO → 3 VIDRIO
             'Radiador': { 'ACEITE SINTÉTICO': 1, 'VIDRIO': 3, 'ALUMINIO': 5, 'ACERO': 6 },
-
             'Alternador': { 'PIEZAS ELECTRÓNICAS': 3, 'COBRE': 4, 'ACERO': 5 }
           },
 
@@ -741,20 +730,14 @@
             'Líquido de Transmisión': { 'ÁCIDO': 1, 'ACEITE SINTÉTICO': 3 },
             'Filtro de Aceite': { 'GOMA': 1, 'ACEITE SINTÉTICO': 1, 'ACERO': 2 },
             'Neumático': { 'ACERO': 2, 'GOMA': 5 },
-
-            // Bujía: 2 COBRE → 2 LATÓN
             'Bujía': { 'PIEZAS ELECTRÓNICAS': 1, 'ACERO': 2, 'LATÓN': 2 },
-
             'Líquido de Dirección': { 'ÁCIDO': 1, 'ACEITE SINTÉTICO': 2 },
             'Refrigerante de Batería': { 'PLÁSTICO': 1, 'ÁCIDO': 2 },
-
-            // Cableado alto voltaje: 5 COBRE → 5 LATÓN
             'Cableado de Alto Voltaje': {
               'FIBRA DE CARBONO': 1,
               'PIEZAS ELECTRÓNICAS': 4,
               'LATÓN': 5
             },
-
             'Pastillas de Freno': { 'GOMA': 2, 'ACERO': 3 },
             'Filtro de Combustible': { 'GOMA': 1, 'ACERO': 2, 'PLÁSTICO': 2 },
             'Líquido de Frenos': { 'ACEITE SINTÉTICO': 1, 'ÁCIDO': 2 },
@@ -764,19 +747,12 @@
           },
 
           rendimiento: {
-            // Suspensión: 1 FIBRA → 2 FIBRA
             'Suspensión': {
               'FIBRA DE CARBONO': 2,
               'ALUMINIO': 2,
               'GOMA': 2,
               'ACERO': 3
             },
-
-            // Turbo:
-            // 1 pieza electrónica → 5
-            // 1 plástico → 1 latón
-            // 2 cobre → 3 fibra carbono
-            // añadir 1 vidrio
             'Turbo': {
               'PIEZAS ELECTRÓNICAS': 5,
               'ALUMINIO': 1,
@@ -785,16 +761,12 @@
               'FIBRA DE CARBONO': 3,
               'VIDRIO': 1
             },
-
-            // Frenos (Rendimiento): 1 COBRE → 1 LATÓN
             'Frenos (Rendimiento)': {
               'FIBRA DE CARBONO': 1,
               'LATÓN': 1,
               'GOMA': 2,
               'ACERO': 3
             },
-
-            // Motor: 3 LATÓN, +10 ACEITE
             'Motor': {
               'PIEZAS ELECTRÓNICAS': 2,
               'FIBRA DE CARBONO': 2,
@@ -803,9 +775,6 @@
               'ALUMINIO': 6,
               'ACEITE SINTÉTICO': 10
             },
-
-            // Transmisión (Rendimiento):
-            // ACEITE 10, 2 VIDRIO, 3 LATÓN
             'Transmisión (Rendimiento)': {
               'ACEITE SINTÉTICO': 10,
               'ALUMINIO': 2,
@@ -813,8 +782,6 @@
               'LATÓN': 3,
               'ACERO': 4
             },
-
-            // Blindaje con fibra carbono añadida
             'Blindaje': {
               'LATÓN': 1,
               'GOMA': 2,
@@ -825,93 +792,56 @@
           },
 
           cosmeticos: {
-            // Interior: 4 PLÁSTICO → 4 LATÓN
             'Interior': { 'ACEITE SINTÉTICO': 1, 'GOMA': 2, 'LATÓN': 4 },
-
-            // Exterior: 3 PLÁSTICO → 3 LATÓN
             'Exterior': { 'VIDRIO': 1, 'LATÓN': 3, 'ALUMINIO': 4 },
-
             'Techo': { 'FIBRA DE CARBONO': 1, 'ALUMINIO': 2, 'ACERO': 3 },
-
             'Luces': { 'PIEZAS ELECTRÓNICAS': 2, 'VIDRIO': 2, 'PLÁSTICO': 2 },
-
             'Chasis': { 'FIBRA DE CARBONO': 2, 'ALUMINIO': 3, 'ACERO': 5 },
-
             'Livery': { 'ÁCIDO': 1, 'ACEITE SINTÉTICO': 2, 'PLÁSTICO': 3 },
-
-            // Extras: 3 PLÁSTICO → 3 LATÓN
             'Extras': { 'PIEZAS ELECTRÓNICAS': 1, 'ALUMINIO': 1, 'LATÓN': 3 },
-
             'Capó': { 'FIBRA DE CARBONO': 1, 'ALUMINIO': 2, 'ACERO': 3 },
-
             'Alerón': { 'PLÁSTICO': 1, 'ALUMINIO': 2, 'FIBRA DE CARBONO': 3 },
-
-            // Claxon: 2 COBRE → 2 LATÓN
             'Claxon': {
               'PIEZAS ELECTRÓNICAS': 1,
               'LATÓN': 2,
               'PLÁSTICO': 2
             },
-
-            // Tinte Ventanas: 2 PLÁSTICO → 2 VIDRIO
             'Tinte Ventanas': {
               'ÁCIDO': 1,
               'ACEITE SINTÉTICO': 1,
               'VIDRIO': 2
             },
-
-            // Parachoques delantero: 3 PLÁSTICO → 3 LATÓN
             'Parachoques Delantero': {
               'GOMA': 1,
               'LATÓN': 3,
               'ACERO': 4
             },
-
-            // Faldones: 3 PLÁSTICO → 3 LATÓN
             'Faldones': { 'ALUMINIO': 1, 'ACERO': 2, 'LATÓN': 3 },
-
-            // Rejilla: 1 PLÁSTICO → 1 LATÓN
             'Rejilla': { 'LATÓN': 1, 'ACERO': 2, 'ALUMINIO': 2 },
-
-            // Parachoques trasero: 3 PLÁSTICO → 3 LATÓN
             'Parachoques Trasero': {
               'GOMA': 1,
               'LATÓN': 3,
               'ACERO': 4
             },
-
             'Humo de Rueda': {
               'ÁCIDO': 1,
               'ACEITE SINTÉTICO': 2,
               'GOMA': 2
             },
-
             'Llantas': { 'GOMA': 1, 'ACERO': 2, 'ALUMINIO': 4 },
-
-            // Pintura: 1 PLÁSTICO → 1 ALUMINIO
             'Pintura': {
               'ALUMINIO': 1,
               'ÁCIDO': 2,
               'ACEITE SINTÉTICO': 2
             },
-
-            // Neones:
-            // 2 PIEZAS ELECTRÓNICAS → 3
-            // 3 PLÁSTICO → 3 HIERRO
-            // + 2 FIBRA DE CARBONO
             'Neones': {
               'PIEZAS ELECTRÓNICAS': 3,
               'VIDRIO': 2,
               'HIERRO': 3,
               'FIBRA DE CARBONO': 2
             },
-
-            // Guardabarros: 2 PLÁSTICO → 2 LATÓN
             'Guardabarros': { 'ALUMINIO': 1, 'LATÓN': 2, 'ACERO': 3 },
-
             'Escape': { 'GOMA': 1, 'ALUMINIO': 2, 'ACERO': 3 },
-
-            // Matrícula: 2 PLÁSTICO → 2 LATÓN
             'Matrícula': { 'ACERO': 1, 'ALUMINIO': 2, 'LATÓN': 2 }
           }
         },
@@ -965,7 +895,6 @@
           this.calculate();
         },
 
-        // Actualiza cantidad cuando se marca/desmarca
         updateQuantity(partName) {
           if (this.selected[partName]) {
             this.quantities[partName] = 1;
@@ -975,15 +904,12 @@
           this.calculate();
         },
 
-        // Calcula totales de materiales y precios
         calculate() {
-          // Reiniciar totales de materiales
           this.materialTotals = {};
           this.materialOrder.forEach(mat => {
             this.materialTotals[mat] = 0;
           });
 
-          // Combinar todas las categorías
           const allParts = {
             ...this.data.principales,
             ...this.data.servicio,
@@ -991,7 +917,6 @@
             ...this.data.cosmeticos
           };
 
-          // Calcular materiales
           for (const [partName, isSelected] of Object.entries(this.selected)) {
             if (isSelected && allParts[partName]) {
               const quantity = Math.max(1, Number(this.quantities[partName]) || 1);
@@ -1003,17 +928,14 @@
             }
           }
 
-          // Calcular precios de venta
           this.calculateSales();
         },
 
-        // Calcula subtotales de ventas
         calculateSales() {
           this.salesSubtotals.principales = 0;
           this.salesSubtotals.servicio = 0;
           this.missingPrices = [];
 
-          // Calcular subtotal de Principales
           for (const [partName, isSelected] of Object.entries(this.selected)) {
             if (isSelected && this.data.principales[partName]) {
               const quantity = Math.max(1, Number(this.quantities[partName]) || 1);
@@ -1029,7 +951,6 @@
             }
           }
 
-          // Calcular subtotal de Servicio
           for (const [partName, isSelected] of Object.entries(this.selected)) {
             if (isSelected && this.data.servicio[partName]) {
               const quantity = Math.max(1, Number(this.quantities[partName]) || 1);
@@ -1046,7 +967,6 @@
           }
         },
 
-        // Marcar todas las piezas
         selectAll() {
           const allParts = {
             ...this.data.principales,
@@ -1063,14 +983,12 @@
           this.calculate();
         },
 
-        // Limpiar todo
         clearAll() {
           this.selected = {};
           this.quantities = {};
           this.calculate();
         },
 
-        // Toggle Full Tunning (solo Rendimiento)
         toggleFullTunning() {
           const rendimientoParts = Object.keys(this.data.rendimiento);
           const allSelected = rendimientoParts.every(part => this.selected[part]);
@@ -1087,7 +1005,6 @@
           this.calculate();
         },
 
-        // Aplicar descuento
         applyDiscount(percent, name) {
           this.discountActive = true;
           this.discountPercent = percent;
@@ -1095,7 +1012,6 @@
           this.showDiscountPopup = false;
         },
 
-        // Quitar descuento
         removeDiscount() {
           this.discountActive = false;
           this.discountPercent = 0;
@@ -1103,13 +1019,11 @@
           this.showDiscountPopup = false;
         },
 
-        // Obtener total con o sin descuento
         getTotalWithDiscount() {
           const total = this.salesSubtotals.principales + this.salesSubtotals.servicio;
           return this.discountActive ? total * (1 - this.discountPercent / 100) : total;
         },
 
-        // Formatear precio
         formatPrice(value) {
           return '$ ' + Number(value || 0).toFixed(2);
         }
