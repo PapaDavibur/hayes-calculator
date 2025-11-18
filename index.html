@@ -10,7 +10,8 @@
   <style>
     /* Variables CSS */
     :root {
-      --accent: #19C1FF;
+      --accent: #19C1FF; /* Azul */
+      --taka-color: #FF69B4; /* Rosa Chicle para TAKA */
       --bg: #0a0a0a;
       --panel: #111;
       --text: #ffffff;
@@ -75,6 +76,17 @@
       background: rgba(25, 193, 255, 0.08);
       box-shadow: 0 0 10px rgba(25, 193, 255, 0.4);
       transform: translateY(-1px);
+    }
+
+    /* Nuevo estilo para el botón TAKA */
+    .btn-taka {
+        color: var(--taka-color);
+        border-color: var(--taka-color);
+    }
+
+    .btn-taka:hover {
+        background: rgba(255, 105, 180, 0.08); /* Rosa más transparente para el hover */
+        box-shadow: 0 0 10px rgba(255, 105, 180, 0.4); /* Sombra rosa */
     }
 
     /* Grid de Secciones */
@@ -388,6 +400,12 @@
       animation: popupSlide 0.3s ease;
     }
 
+    /* Estilo adicional para el popup de precios que es más ancho */
+    .popup.prices-popup {
+      max-width: 900px;
+      width: 95%;
+    }
+
     @keyframes popupSlide {
       from {
         opacity: 0;
@@ -479,18 +497,16 @@
 </head>
 <body x-data="hayesCalculator()">
 
-  <!-- Logo y Título -->
   <img src="https://i.postimg.cc/FRcwXPHk/LOGO-2.png" alt="Hayes Motorworks" class="logo">
   <h1>Calculadora de Materiales – Hayes Motorworks</h1>
 
-  <!-- Botones de Acción -->
   <div class="actions">
     <button class="btn" @click="selectAll()">MARCAR TODO</button>
     <button class="btn" @click="clearAll()">LIMPIAR TODO</button>
     <button class="btn" @click="showDiscountPopup = true">APLICAR DESCUENTO</button>
+    <button class="btn btn-taka" @click="showPricesPopup = true">TAKA</button>
   </div>
 
-  <!-- Popup de Descuento (sin foto, texto igual que otros botones) -->
   <div x-show="showDiscountPopup" class="popup-overlay" @click="showDiscountPopup = false">
     <div class="popup" @click.stop>
       <h2>Descuento</h2>
@@ -509,10 +525,19 @@
     </div>
   </div>
 
-  <!-- Secciones de Piezas -->
+  <div x-show="showPricesPopup" class="popup-overlay" @click="showPricesPopup = false">
+    <div class="popup prices-popup" @click.stop>
+      <h2>TAKA</h2>
+      <img src="https://i.ibb.co/fzbkQSsm/taka-1.png" alt="Tabla de Precios de Componentes TAKA" style="width: 100%; height: auto; display: block; border-radius: 8px;">
+      
+      <div class="popup-actions" style="margin-top: 20px;">
+        <button class="btn-close" @click="showPricesPopup = false">CERRAR</button>
+      </div>
+    </div>
+  </div>
+
   <div class="sections">
     
-    <!-- Partes Principales -->
     <div class="card">
       <h2>Partes Principales</h2>
       <template x-for="(materials, partName) in data.principales" :key="partName">
@@ -532,7 +557,6 @@
       </template>
     </div>
 
-    <!-- Partes de Servicio -->
     <div class="card">
       <h2>Partes de Servicio</h2>
       <template x-for="(materials, partName) in data.servicio" :key="partName">
@@ -552,7 +576,6 @@
       </template>
     </div>
 
-    <!-- Rendimiento -->
     <div class="card">
       <h2>Rendimiento</h2>
       <template x-for="(materials, partName) in data.rendimiento" :key="partName">
@@ -574,7 +597,6 @@
       <small class="note">Activa o desactiva todas las piezas de rendimiento.</small>
     </div>
 
-    <!-- Cosméticos -->
     <div class="card wide">
       <h2>Cosméticos</h2>
       <div class="cosmeticos-grid">
@@ -598,10 +620,8 @@
 
   </div>
 
-  <!-- Resumen -->
   <div class="summary">
     
-    <!-- Totales de Materiales -->
     <div class="totals">
       <h3>TOTALES DE MATERIALES</h3>
       <template x-if="Object.values(materialTotals).some(v => v > 0)">
@@ -625,7 +645,6 @@
       <small class="note">Los totales se multiplican por la cantidad indicada por pieza.</small>
     </div>
 
-    <!-- Total a Cobrar -->
     <div class="sales">
       <h3>TOTAL A COBRAR 💰</h3>
       <div class="row">
@@ -886,6 +905,7 @@
         salesSubtotals: { principales: 0, servicio: 0 },
         missingPrices: [],
         showDiscountPopup: false,
+        showPricesPopup: false, // <-- Variable para el popup TAKA
         discountActive: false,
         discountPercent: 0,
         discountName: '',
