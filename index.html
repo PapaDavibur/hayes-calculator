@@ -108,6 +108,17 @@
       box-shadow: 0 0 10px rgba(138, 43, 226, .4);
     }
 
+    /* Botón NOAH dorado */
+    .btn-noah {
+      color: #FFD700;
+      border-color: #FFD700;
+    }
+
+    .btn-noah:hover {
+      background: rgba(255, 215, 0, .1);
+      box-shadow: 0 0 10px rgba(255, 215, 0, .5);
+    }
+
     /* ========================================
        GRID DE SECCIONES
        ======================================== */
@@ -526,7 +537,7 @@
 
   <!-- Logo -->
   <img src="https://i.postimg.cc/FRcwXPHk/LOGO-2.png" alt="Hayes Motorworks" class="logo">
-  
+
   <!-- Título principal -->
   <h1>Calculadora de Materiales – Hayes Motorworks</h1>
 
@@ -537,6 +548,7 @@
     <button class="btn" @click="showDiscountPopup = true">APLICAR DESCUENTO</button>
     <button class="btn btn-taka" @click="showPricesPopup = true">TAKA</button>
     <button class="btn btn-aicha" @click="showAichaPopup = true">AICHA</button>
+    <button class="btn btn-noah" @click="showNoahPopup = true">NOAH</button>
   </div>
 
   <!-- Popup de Descuento -->
@@ -576,9 +588,20 @@
     </div>
   </div>
 
+  <!-- Popup NOAH -->
+  <div x-show="showNoahPopup" class="popup-overlay" @click="showNoahPopup = false">
+    <div class="popup prices-popup" @click.stop>
+      <h2 style="color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,.8);">NOAH</h2>
+      <img src="https://i.postimg.cc/6qLJ2THv/NOAH.jpg" alt="NOAH" style="width:100%;border-radius:8px;">
+      <div class="popup-actions" style="margin-top:20px;">
+        <button class="btn-close" @click="showNoahPopup = false">CERRAR</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Secciones de piezas -->
   <div class="sections">
-    
+
     <!-- Partes Principales -->
     <div class="card">
       <h2>Partes Principales</h2>
@@ -643,7 +666,7 @@
 
   <!-- Resumen -->
   <div class="summary">
-    
+
     <!-- Totales de Materiales -->
     <div class="totals">
       <h3>TOTALES DE MATERIALES</h3>
@@ -717,7 +740,7 @@
           'FIBRA DE CARBONO',
           'HIERRO'
         ],
-        
+
         // URLs de las imágenes de cada material
         materialImages: {
           'COBRE': 'https://i.postimg.cc/QxCnTRVG/cobre.png',
@@ -861,6 +884,7 @@
         showDiscountPopup: false,  // Control popup de descuento
         showPricesPopup: false,    // Control popup TAKA
         showAichaPopup: false,     // Control popup AICHA
+        showNoahPopup: false,      // Control popup NOAH
         discountActive: false,     // Estado del descuento
         discountPercent: 0,        // Porcentaje de descuento
         discountName: '',          // Nombre del descuento
@@ -904,7 +928,7 @@
           for (const [name, on] of Object.entries(this.selected)) {
             if (on && all[name]) {
               const qty = Math.max(1, Number(this.quantities[name]) || 1);
-              
+
               // Sumar materiales multiplicados por cantidad
               for (const [mat, amt] of Object.entries(all[name])) {
                 this.materialTotals[mat] = (this.materialTotals[mat] || 0) + (amt * qty);
