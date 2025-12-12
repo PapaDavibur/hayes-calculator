@@ -705,10 +705,14 @@
         <span>Subtotal Servicio</span>
         <strong x-text="fmt(salesSub.servicio)"></strong>
       </div>
+      <div class="row">
+        <span>Subtotal Kit de Limpieza</span>
+        <strong x-text="fmt(salesSub.limpieza)"></strong>
+      </div>
       <template x-if="discountActive">
         <div class="row" style="color:#4ade80;">
           <span x-text="'Descuento ' + discountName + ' (' + discountPercent + '%)'"></span>
-          <strong x-text="fmt(-((salesSub.principales + salesSub.servicio) * (discountPercent / 100)))"></strong>
+          <strong x-text="fmt(-((salesSub.principales + salesSub.servicio + salesSub.limpieza) * (discountPercent / 100)))"></strong>
         </div>
       </template>
       <div class="row total">
@@ -875,6 +879,11 @@
             'Refrigerante': 24,
             'Refrigerante de Batería': 24,
             'Cableado de Alto Voltaje': 80
+          },
+
+          // Precios de kit de limpieza
+          limpieza: {
+            'Kit de Limpieza': 200
           }
         },
 
@@ -954,6 +963,7 @@
         calcSales() {
           this.salesSub.principales = 0;
           this.salesSub.servicio = 0;
+          this.salesSub.limpieza = 0;
           this.missingPrices = [];
 
           // Calcular subtotal de Principales
@@ -981,6 +991,23 @@
 
               if (typeof price === 'number') {
                 this.salesSub.servicio += price * qty;
+              } else {
+                // Agregar a lista de precios faltantes
+                if (!this.missingPrices.includes(name)) {
+                  this.missingPrices.push(name);
+                }
+              }
+            }
+          }
+
+          // Calcular subtotal de Kit de Limpieza
+          for (const [name, on] of Object.entries(this.selected)) {
+            if (on && this.data.limpieza[name]) {
+              const qty = Math.max(1, Number(this.quantities[name]) || 1);
+              const price = this.prices.limpieza[name];
+
+              if (typeof price === 'number') {
+                this.salesSub.limpieza += price * qty;
               } else {
                 // Agregar a lista de precios faltantes
                 if (!this.missingPrices.includes(name)) {
@@ -1064,7 +1091,7 @@
         // OBTENER TOTAL CON O SIN DESCUENTO
         // ==========================================
         getTotal() {
-          const total = this.salesSub.principales + this.salesSub.servicio;
+          const total = this.salesSub.principales + this.salesSub.servicio + this.salesSub.limpieza;
           return this.discountActive 
             ? total * (1 - this.discountPercent / 100) 
             : total;
