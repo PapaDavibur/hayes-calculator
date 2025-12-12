@@ -99,24 +99,13 @@
 
     /* Botón AICHA con estilo especial */
     .btn-aicha {
-      color: #8a2be2;
-      border-color: #8a2be2;
-    }
-
-    .btn-aicha:hover {
-      background: rgba(138, 43, 226, .08);
-      box-shadow: 0 0 10px rgba(138, 43, 226, .4);
-    }
-
-    /* Botón NOAH dorado */
-    .btn-noah {
       color: #FFD700;
       border-color: #FFD700;
     }
 
-    .btn-noah:hover {
-      background: rgba(255, 215, 0, .1);
-      box-shadow: 0 0 10px rgba(255, 215, 0, .5);
+    .btn-aicha:hover {
+      background: rgba(255, 215, 0, .08);
+      box-shadow: 0 0 10px rgba(255, 215, 0, .4);
     }
 
     /* ========================================
@@ -128,6 +117,15 @@
       gap: 16px;
       justify-content: center;
       align-items: flex-start;
+    }
+
+    /* Contenedor para Rendimiento y Kit de Limpieza */
+    .rendimiento-container {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      width: 360px;
+      max-width: 100%;
     }
 
     /* ========================================
@@ -537,7 +535,7 @@
 
   <!-- Logo -->
   <img src="https://i.postimg.cc/FRcwXPHk/LOGO-2.png" alt="Hayes Motorworks" class="logo">
-
+  
   <!-- Título principal -->
   <h1>Calculadora de Materiales – Hayes Motorworks</h1>
 
@@ -548,7 +546,6 @@
     <button class="btn" @click="showDiscountPopup = true">APLICAR DESCUENTO</button>
     <button class="btn btn-taka" @click="showPricesPopup = true">TAKA</button>
     <button class="btn btn-aicha" @click="showAichaPopup = true">AICHA</button>
-    <button class="btn btn-noah" @click="showNoahPopup = true">NOAH</button>
   </div>
 
   <!-- Popup de Descuento -->
@@ -580,7 +577,7 @@
   <!-- Popup AICHA -->
   <div x-show="showAichaPopup" class="popup-overlay" @click="showAichaPopup = false">
     <div class="popup prices-popup" @click.stop>
-      <h2 style="color:#8a2be2;text-shadow:0 0 10px rgba(138,43,226,.8);">AICHA</h2>
+      <h2 style="color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,.8);">AICHA</h2>
       <img src="https://i.postimg.cc/TYGt2tnc/AICHA.jpg" alt="AICHA" style="width:100%;border-radius:8px;">
       <div class="popup-actions" style="margin-top:20px;">
         <button class="btn-close" @click="showAichaPopup = false">CERRAR</button>
@@ -588,20 +585,9 @@
     </div>
   </div>
 
-  <!-- Popup NOAH -->
-  <div x-show="showNoahPopup" class="popup-overlay" @click="showNoahPopup = false">
-    <div class="popup prices-popup" @click.stop>
-      <h2 style="color:#FFD700;text-shadow:0 0 10px rgba(255,215,0,.8);">NOAH</h2>
-      <img src="https://i.postimg.cc/6qLJ2THv/NOAH.jpg" alt="NOAH" style="width:100%;border-radius:8px;">
-      <div class="popup-actions" style="margin-top:20px;">
-        <button class="btn-close" @click="showNoahPopup = false">CERRAR</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Secciones de piezas -->
   <div class="sections">
-
+    
     <!-- Partes Principales -->
     <div class="card">
       <h2>Partes Principales</h2>
@@ -630,20 +616,37 @@
       </template>
     </div>
 
-    <!-- Rendimiento -->
-    <div class="card">
-      <h2>Rendimiento</h2>
-      <template x-for="(mats, name) in data.rendimiento" :key="name">
-        <div class="item">
-          <label>
-            <input type="checkbox" x-model="selected[name]" @change="updateQty(name)">
-            <span x-text="name"></span>
-          </label>
-          <input type="number" min="1" x-model.number="quantities[name]" @input="calc()" :class="{'visible':selected[name]}">
-        </div>
-      </template>
-      <button class="full-tunning-btn" @click="toggleFullTunning()">FULL TUNNING</button>
-      <small class="note">Activa o desactiva todas las piezas de rendimiento.</small>
+    <!-- Contenedor Rendimiento + Kit de Limpieza -->
+    <div class="rendimiento-container">
+      <!-- Rendimiento -->
+      <div class="card">
+        <h2>Rendimiento</h2>
+        <template x-for="(mats, name) in data.rendimiento" :key="name">
+          <div class="item">
+            <label>
+              <input type="checkbox" x-model="selected[name]" @change="updateQty(name)">
+              <span x-text="name"></span>
+            </label>
+            <input type="number" min="1" x-model.number="quantities[name]" @input="calc()" :class="{'visible':selected[name]}">
+          </div>
+        </template>
+        <button class="full-tunning-btn" @click="toggleFullTunning()">FULL TUNNING</button>
+        <small class="note">Activa o desactiva todas las piezas de rendimiento.</small>
+      </div>
+
+      <!-- Kit de Limpieza -->
+      <div class="card">
+        <h2>Kit de Limpieza</h2>
+        <template x-for="(mats, name) in data.limpieza" :key="name">
+          <div class="item">
+            <label>
+              <input type="checkbox" x-model="selected[name]" @change="updateQty(name)">
+              <span x-text="name"></span>
+            </label>
+            <input type="number" min="1" x-model.number="quantities[name]" @input="calc()" :class="{'visible':selected[name]}">
+          </div>
+        </template>
+      </div>
     </div>
 
     <!-- Cosméticos -->
@@ -666,7 +669,7 @@
 
   <!-- Resumen -->
   <div class="summary">
-
+    
     <!-- Totales de Materiales -->
     <div class="totals">
       <h3>TOTALES DE MATERIALES</h3>
@@ -740,7 +743,7 @@
           'FIBRA DE CARBONO',
           'HIERRO'
         ],
-
+        
         // URLs de las imágenes de cada material
         materialImages: {
           'COBRE': 'https://i.postimg.cc/QxCnTRVG/cobre.png',
@@ -762,37 +765,37 @@
         // BASE DE DATOS DE PIEZAS Y MATERIALES
         // ==========================================
         data: {
-          // Partes principales del vehículo
+          // Partes principales del vehículo (REORDENADAS)
           principales: {
-            'Batería Eléctrica': {'ÁCIDO':5,'LATÓN':5,'ALUMINIO':6,'PIEZAS ELECTRÓNICAS':7},
-            'Rueda de Vehículo': {'LATÓN':1,'FIBRA DE CARBONO':2,'ACERO':4,'GOMA':5},
-            'Frenos': {'LATÓN':2,'GOMA':3,'ACERO':5},
+            'Alternador': {'PIEZAS ELECTRÓNICAS':3,'COBRE':4,'ACERO':5},
             'Bloque Motor': {'GOMA':1,'LATÓN':2,'PIEZAS ELECTRÓNICAS':3,'HIERRO':4,'ACERO':5},
-            'Tanque Gasolina': {'GOMA':1,'LATÓN':2,'PIEZAS ELECTRÓNICAS':3,'HIERRO':4,'ACERO':5},
-            'Carrocería': {'GOMA':1,'LATÓN':2,'PIEZAS ELECTRÓNICAS':3,'HIERRO':4,'ACERO':5},
-            'Transmisión': {'LATÓN':2,'ACEITE SINTÉTICO':3,'ALUMINIO':6,'ACERO':10},
             'Bomba de Dirección': {'ACEITE SINTÉTICO':2,'PIEZAS ELECTRÓNICAS':3,'ALUMINIO':6,'ACERO':8},
+            'Carrocería': {'GOMA':1,'LATÓN':2,'PIEZAS ELECTRÓNICAS':3,'HIERRO':4,'ACERO':5},
+            'Frenos': {'LATÓN':2,'GOMA':3,'ACERO':5},
             'Inyectores': {'PIEZAS ELECTRÓNICAS':2,'LATÓN':2,'ALUMINIO':3,'ACERO':4},
-            'Motor Eléctrico': {'FIBRA DE CARBONO':4,'PIEZAS ELECTRÓNICAS':6,'LATÓN':7,'ACERO':8},
             'Radiador': {'ACEITE SINTÉTICO':1,'VIDRIO':3,'ALUMINIO':5,'ACERO':6},
-            'Alternador': {'PIEZAS ELECTRÓNICAS':3,'COBRE':4,'ACERO':5}
+            'Tanque Gasolina': {'GOMA':1,'LATÓN':2,'PIEZAS ELECTRÓNICAS':3,'HIERRO':4,'ACERO':5},
+            'Transmisión': {'LATÓN':2,'ACEITE SINTÉTICO':3,'ALUMINIO':6,'ACERO':10},
+            'Batería Eléctrica': {'ÁCIDO':5,'LATÓN':5,'ALUMINIO':6,'PIEZAS ELECTRÓNICAS':7},
+            'Motor Eléctrico': {'FIBRA DE CARBONO':4,'PIEZAS ELECTRÓNICAS':6,'LATÓN':7,'ACERO':8},
+            'Rueda de Vehículo': {'LATÓN':1,'FIBRA DE CARBONO':2,'ACERO':4,'GOMA':5}
           },
 
-          // Partes de servicio/mantenimiento
+          // Partes de servicio/mantenimiento (REORDENADAS)
           servicio: {
-            'Líquido de Transmisión': {'ÁCIDO':1,'ACEITE SINTÉTICO':3},
             'Filtro de Aceite': {'GOMA':1,'ACEITE SINTÉTICO':1,'ACERO':2},
-            'Neumático': {'ACERO':2,'GOMA':5},
             'Bujía': {'PIEZAS ELECTRÓNICAS':1,'ACERO':2,'LATÓN':2},
-            'Líquido de Dirección': {'ÁCIDO':1,'ACEITE SINTÉTICO':2},
-            'Refrigerante de Batería': {'PLÁSTICO':1,'ÁCIDO':2},
-            'Cableado de Alto Voltaje': {'FIBRA DE CARBONO':1,'PIEZAS ELECTRÓNICAS':4,'LATÓN':5},
-            'Pastillas de Freno': {'GOMA':2,'ACERO':3},
-            'Filtro de Combustible': {'GOMA':1,'ACERO':2,'PLÁSTICO':2},
-            'Líquido de Frenos': {'ACEITE SINTÉTICO':1,'ÁCIDO':2},
             'Correa de Transmisión': {'ACERO':2,'GOMA':3},
             'Filtro de Aire': {'GOMA':1,'PLÁSTICO':2},
-            'Refrigerante': {'PLÁSTICO':1,'ÁCIDO':2}
+            'Filtro de Combustible': {'GOMA':1,'ACERO':2,'PLÁSTICO':2},
+            'Líquido de Dirección': {'ÁCIDO':1,'ACEITE SINTÉTICO':2},
+            'Líquido de Frenos': {'ACEITE SINTÉTICO':1,'ÁCIDO':2},
+            'Líquido de Transmisión': {'ÁCIDO':1,'ACEITE SINTÉTICO':3},
+            'Neumático': {'ACERO':2,'GOMA':5},
+            'Pastillas de Freno': {'GOMA':2,'ACERO':3},
+            'Refrigerante': {'PLÁSTICO':1,'ÁCIDO':2},
+            'Refrigerante de Batería': {'PLÁSTICO':1,'ÁCIDO':2},
+            'Cableado de Alto Voltaje': {'FIBRA DE CARBONO':1,'PIEZAS ELECTRÓNICAS':4,'LATÓN':5}
           },
 
           // Mejoras de rendimiento
@@ -829,6 +832,11 @@
             'Guardabarros': {'ALUMINIO':1,'LATÓN':2,'ACERO':3},
             'Escape': {'GOMA':1,'ALUMINIO':2,'ACERO':3},
             'Matrícula': {'ACERO':1,'ALUMINIO':2,'LATÓN':2}
+          },
+
+          // Kit de Limpieza
+          limpieza: {
+            'Kit de Limpieza': {'VIDRIO':3,'GOMA':5,'ALUMINIO':5,'ACEITE SINTÉTICO':8}
           }
         },
 
@@ -836,37 +844,37 @@
         // PRECIOS DE VENTA
         // ==========================================
         prices: {
-          // Precios de partes principales
+          // Precios de partes principales (REORDENADOS)
           principales: {
-            'Bloque Motor': 100,
-            'Carrocería': 100,
-            'Tanque Gasolina': 100,
             'Alternador': 96,
-            'Rueda de Vehículo': 96,
+            'Bloque Motor': 100,
+            'Bomba de Dirección': 152,
+            'Carrocería': 100,
+            'Frenos': 80,
+            'Inyectores': 88,
+            'Radiador': 120,
+            'Tanque Gasolina': 100,
             'Transmisión': 168,
             'Batería Eléctrica': 184,
-            'Bomba de Dirección': 152,
-            'Radiador': 120,
-            'Inyectores': 88,
-            'Frenos': 80,
-            'Motor Eléctrico': 200
+            'Motor Eléctrico': 200,
+            'Rueda de Vehículo': 96
           },
 
-          // Precios de partes de servicio
+          // Precios de partes de servicio (REORDENADOS)
           servicio: {
-            'Refrigerante de Batería': 24,
-            'Bujía': 40,
-            'Filtro de Aire': 24,
-            'Correa de Transmisión': 40,
-            'Pastillas de Freno': 40,
             'Filtro de Aceite': 32,
+            'Bujía': 40,
+            'Correa de Transmisión': 40,
+            'Filtro de Aire': 24,
+            'Filtro de Combustible': 40,
             'Líquido de Dirección': 24,
             'Líquido de Frenos': 24,
-            'Cableado de Alto Voltaje': 80,
-            'Neumático': 56,
-            'Filtro de Combustible': 40,
             'Líquido de Transmisión': 32,
-            'Refrigerante': 24
+            'Neumático': 56,
+            'Pastillas de Freno': 40,
+            'Refrigerante': 24,
+            'Refrigerante de Batería': 24,
+            'Cableado de Alto Voltaje': 80
           }
         },
 
@@ -884,7 +892,6 @@
         showDiscountPopup: false,  // Control popup de descuento
         showPricesPopup: false,    // Control popup TAKA
         showAichaPopup: false,     // Control popup AICHA
-        showNoahPopup: false,      // Control popup NOAH
         discountActive: false,     // Estado del descuento
         discountPercent: 0,        // Porcentaje de descuento
         discountName: '',          // Nombre del descuento
@@ -921,14 +928,15 @@
             ...this.data.principales, 
             ...this.data.servicio, 
             ...this.data.rendimiento, 
-            ...this.data.cosmeticos
+            ...this.data.cosmeticos,
+            ...this.data.limpieza
           };
 
           // Calcular materiales de piezas seleccionadas
           for (const [name, on] of Object.entries(this.selected)) {
             if (on && all[name]) {
               const qty = Math.max(1, Number(this.quantities[name]) || 1);
-
+              
               // Sumar materiales multiplicados por cantidad
               for (const [mat, amt] of Object.entries(all[name])) {
                 this.materialTotals[mat] = (this.materialTotals[mat] || 0) + (amt * qty);
@@ -991,7 +999,8 @@
             ...this.data.principales, 
             ...this.data.servicio, 
             ...this.data.rendimiento, 
-            ...this.data.cosmeticos
+            ...this.data.cosmeticos,
+            ...this.data.limpieza
           };
 
           Object.keys(all).forEach(n => {
