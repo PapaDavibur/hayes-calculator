@@ -529,6 +529,33 @@
       .cosmeticos-grid { grid-template-columns: 1fr; }
       .grid { grid-template-columns: 1fr; }
     }
+
+    /* ========================================
+       EFECTO DE NIEVE NAVIDEÑA
+       ======================================== */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      color: #fff;
+      font-size: 1em;
+      font-family: Arial, sans-serif;
+      text-shadow: 0 0 5px #000;
+      pointer-events: none;
+      z-index: 9999;
+      user-select: none;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0.5;
+      }
+    }
   </style>
 </head>
 <body x-data="calculator()">
@@ -727,6 +754,64 @@
   </div>
 
   <script>
+    // ==========================================
+    // EFECTO DE NIEVE NAVIDEÑA
+    // ==========================================
+    function createSnowflakes() {
+      const snowflakeChars = ['❄', '❅', '❆'];
+      const snowflakeCount = 50; // Cantidad de copos iniciales
+      
+      // Crear primeros 50 copos (caen más rápido)
+      for (let i = 0; i < snowflakeCount; i++) {
+        setTimeout(() => {
+          const snowflake = document.createElement('div');
+          snowflake.classList.add('snowflake');
+          snowflake.innerHTML = snowflakeChars[Math.floor(Math.random() * snowflakeChars.length)];
+          
+          // Posición aleatoria horizontal
+          snowflake.style.left = Math.random() * 100 + '%';
+          
+          // Tamaño aleatorio
+          const size = Math.random() * 1.5 + 0.5;
+          snowflake.style.fontSize = size + 'em';
+          
+          // Duración ajustada = caída moderada (6-10 segundos)
+          const duration = Math.random() * 4 + 6;
+          snowflake.style.animationDuration = duration + 's';
+          
+          // Sin retraso para caída inmediata
+          snowflake.style.animationDelay = '0s';
+          
+          document.body.appendChild(snowflake);
+          
+          // Eliminar el copo después de que termine la animación
+          setTimeout(() => {
+            snowflake.remove();
+          }, duration * 1000);
+        }, i * 50); // Crear copos más rápido (cada 50ms)
+      }
+      
+      // Crear nuevos copos continuamente (velocidad normal)
+      setInterval(() => {
+        const snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        snowflake.innerHTML = snowflakeChars[Math.floor(Math.random() * snowflakeChars.length)];
+        snowflake.style.left = Math.random() * 100 + '%';
+        const size = Math.random() * 1.5 + 0.5;
+        snowflake.style.fontSize = size + 'em';
+        const duration = Math.random() * 10 + 10;
+        snowflake.style.animationDuration = duration + 's';
+        document.body.appendChild(snowflake);
+        setTimeout(() => snowflake.remove(), duration * 1000);
+      }, 500);
+    }
+
+    // Iniciar la nieve cuando cargue la página
+    document.addEventListener('DOMContentLoaded', createSnowflakes);
+
+    // ==========================================
+    // CALCULADORA PRINCIPAL
+    // ==========================================
     function calculator() {
       return {
         // ==========================================
