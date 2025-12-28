@@ -643,7 +643,7 @@
       </template>
     </div>
 
-    <!-- Contenedor Rendimiento + Kit de Limpieza -->
+    <!-- Kits -->
     <div class="rendimiento-container">
       <!-- Rendimiento -->
       <div class="card">
@@ -661,10 +661,10 @@
         <small class="note">Activa o desactiva todas las piezas de rendimiento.</small>
       </div>
 
-      <!-- Kit de Limpieza -->
+      <!-- Kits -->
       <div class="card">
-        <h2>Kit de Limpieza</h2>
-        <template x-for="(mats, name) in data.limpieza" :key="name">
+        <h2>Kits</h2>
+        <template x-for="(mats, name) in data.kits" :key="name">
           <div class="item">
             <label>
               <input type="checkbox" x-model="selected[name]" @change="updateQty(name)">
@@ -733,13 +733,13 @@
         <strong x-text="fmt(salesSub.servicio)"></strong>
       </div>
       <div class="row">
-        <span>Subtotal Kit de Limpieza</span>
-        <strong x-text="fmt(salesSub.limpieza)"></strong>
+        <span>Subtotal Kits</span>
+        <strong x-text="fmt(salesSub.kits)"></strong>
       </div>
       <template x-if="discountActive">
         <div class="row" style="color:#4ade80;">
           <span x-text="'Descuento ' + discountName + ' (' + discountPercent + '%)'"></span>
-          <strong x-text="fmt(-((salesSub.principales + salesSub.servicio + salesSub.limpieza) * (discountPercent / 100)))"></strong>
+          <strong x-text="fmt(-((salesSub.principales + salesSub.servicio + salesSub.kits) * (discountPercent / 100)))"></strong>
         </div>
       </template>
       <div class="row total">
@@ -803,7 +803,7 @@
         snowflake.style.animationDuration = duration + 's';
         document.body.appendChild(snowflake);
         setTimeout(() => snowflake.remove(), duration * 1000);
-      }, 250);
+      }, 500);
     }
 
     // Iniciar la nieve cuando cargue la página
@@ -856,7 +856,7 @@
         data: {
           // Partes principales del vehículo (REORDENADAS)
           principales: {
-            'Alternador': {'PIEZAS ELECTRÓNICAS':3,'ALUMINIO':4,'ACERO':5},
+            'Alternador': {'PIEZAS ELECTRÓNICAS':3,'COBRE':4,'ACERO':5},
             'Bloque Motor': {'GOMA':1,'LATÓN':2,'PIEZAS ELECTRÓNICAS':3,'HIERRO':4,'ACERO':5},
             'Bomba de Dirección': {'ACEITE SINTÉTICO':2,'PIEZAS ELECTRÓNICAS':3,'ALUMINIO':6,'ACERO':8},
             'Carrocería': {'GOMA':1,'LATÓN':2,'PIEZAS ELECTRÓNICAS':3,'HIERRO':4,'ACERO':5},
@@ -923,9 +923,11 @@
             'Matrícula': {'ACERO':1,'ALUMINIO':2,'LATÓN':2}
           },
 
-          // Kit de Limpieza
-          limpieza: {
-            'Kit de Limpieza': {'VIDRIO':3,'GOMA':5,'ALUMINIO':5,'ACEITE SINTÉTICO':8}
+          // Kits
+          kits: {
+            'Kit de Limpieza': {'VIDRIO':3,'GOMA':5,'ALUMINIO':5,'ACEITE SINTÉTICO':8},
+            'Kit de Reparación': {'PIEZAS ELECTRÓNICAS':2,'GOMA':2,'LATÓN':3,'ACERO':3},
+            'Cadenas para Nieve': {'ACERO':5,'ALUMINIO':10}
           }
         },
 
@@ -933,25 +935,25 @@
         // PRECIOS DE VENTA
         // ==========================================
         prices: {
-          // Precios de partes principales (REORDENADOS)
+          // Precios de partes principales (ACTUALIZADOS)
           principales: {
             'Alternador': 96,
-            'Bloque Motor': 100,
+            'Bloque Motor': 150,
             'Bomba de Dirección': 152,
-            'Carrocería': 100,
+            'Carrocería': 150,
             'Frenos': 80,
             'Inyectores': 88,
             'Radiador': 120,
-            'Tanque Gasolina': 100,
+            'Tanque Gasolina': 150,
             'Transmisión': 168,
             'Batería Eléctrica': 184,
             'Motor Eléctrico': 200,
             'Rueda de Vehículo': 96
           },
 
-          // Precios de partes de servicio (REORDENADOS)
+          // Precios de partes de servicio (ACTUALIZADOS)
           servicio: {
-            'Filtro de Aceite': 32,
+            'Filtro de Aceite': 24,
             'Bujía': 40,
             'Correa de Transmisión': 40,
             'Filtro de Aire': 24,
@@ -966,9 +968,10 @@
             'Cableado de Alto Voltaje': 80
           },
 
-          // Precios de kit de limpieza
-          limpieza: {
-            'Kit de Limpieza': 200
+          // Precios de kits (ACTUALIZADOS)
+          kits: {
+            'Kit de Limpieza': 200,
+            'Kit de Reparación': 350
           }
         },
 
@@ -1023,7 +1026,7 @@
             ...this.data.servicio, 
             ...this.data.rendimiento, 
             ...this.data.cosmeticos,
-            ...this.data.limpieza
+            ...this.data.kits
           };
 
           // Calcular materiales de piezas seleccionadas
@@ -1048,7 +1051,7 @@
         calcSales() {
           this.salesSub.principales = 0;
           this.salesSub.servicio = 0;
-          this.salesSub.limpieza = 0;
+          this.salesSub.kits = 0;
           this.missingPrices = [];
 
           // Calcular subtotal de Principales
@@ -1060,7 +1063,6 @@
               if (typeof price === 'number') {
                 this.salesSub.principales += price * qty;
               } else {
-                // Agregar a lista de precios faltantes
                 if (!this.missingPrices.includes(name)) {
                   this.missingPrices.push(name);
                 }
@@ -1077,7 +1079,6 @@
               if (typeof price === 'number') {
                 this.salesSub.servicio += price * qty;
               } else {
-                // Agregar a lista de precios faltantes
                 if (!this.missingPrices.includes(name)) {
                   this.missingPrices.push(name);
                 }
@@ -1085,16 +1086,15 @@
             }
           }
 
-          // Calcular subtotal de Kit de Limpieza
+          // Calcular subtotal de Kits
           for (const [name, on] of Object.entries(this.selected)) {
-            if (on && this.data.limpieza[name]) {
+            if (on && this.data.kits[name]) {
               const qty = Math.max(1, Number(this.quantities[name]) || 1);
-              const price = this.prices.limpieza[name];
+              const price = this.prices.kits[name];
 
               if (typeof price === 'number') {
-                this.salesSub.limpieza += price * qty;
+                this.salesSub.kits += price * qty;
               } else {
-                // Agregar a lista de precios faltantes
                 if (!this.missingPrices.includes(name)) {
                   this.missingPrices.push(name);
                 }
@@ -1112,7 +1112,7 @@
             ...this.data.servicio, 
             ...this.data.rendimiento, 
             ...this.data.cosmeticos,
-            ...this.data.limpieza
+            ...this.data.kits
           };
 
           Object.keys(all).forEach(n => {
@@ -1176,7 +1176,7 @@
         // OBTENER TOTAL CON O SIN DESCUENTO
         // ==========================================
         getTotal() {
-          const total = this.salesSub.principales + this.salesSub.servicio + this.salesSub.limpieza;
+          const total = this.salesSub.principales + this.salesSub.servicio + this.salesSub.kits;
           return this.discountActive 
             ? total * (1 - this.discountPercent / 100) 
             : total;
