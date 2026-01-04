@@ -530,32 +530,6 @@
       .grid { grid-template-columns: 1fr; }
     }
 
-    /* ========================================
-       EFECTO DE NIEVE NAVIDEÑA
-       ======================================== */
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      color: #fff;
-      font-size: 1em;
-      font-family: Arial, sans-serif;
-      text-shadow: 0 0 5px #000;
-      pointer-events: none;
-      z-index: 9999;
-      user-select: none;
-      animation: fall linear infinite;
-    }
-
-    @keyframes fall {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0.5;
-      }
-    }
   </style>
 </head>
 <body x-data="calculator()">
